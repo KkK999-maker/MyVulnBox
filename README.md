@@ -19,6 +19,7 @@ MyVulnBox
   * 自動設定一般使用者CP提權弱點
 * 使用者可以此設定後之VM或DockerContainer，作為練習破密及提權靶機
 
+> 以下需要修改
 
 # 參、REPO使用方法
 
