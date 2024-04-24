@@ -1,57 +1,69 @@
 #!/bin/bash
+# Usage: sudo bash setup_target.sh
 
-# ==============================
-# 设置靶机脚本
-# ==============================
-# 使用前请先将脚本赋予执行权限：chmod +x setup_target.sh
-# 然后执行脚本：./setup_target.sh
+# Basic Configuration
+# 1. Install Ubuntu
+# 2. Create admin user K999 with highest privileges
+# 3. Set password for K999 as base64 encoded 'congragulation'
+# 4. Ensure SSH service exists, if not, create it
+# 5. Ensure HTTP service exists, if not, create it
+# 6. Ensure HTTPS service exists, if not, create it
+# 7. Ensure sudo function exists, if not, create it
 
-# ==============================
-# 基本设置
-# ==============================
-# 1. 系统是Ubuntu
-# 2. 有一个管理者叫K999，拥有最高使用者的权限
-# 3. K999的密码是congragulation用base64加密的方式储存
-# 4. 确认ssh服务是否存在，如果不存在，把它建立起来
-
-# 安装 OpenSSH 服务
+# Install necessary packages
 apt-get update
-apt-get install -y openssh-server
+apt-get install -y ssh apache2 openssl sudo
 
-# 添加用户 K999
+# Create admin user K999
 useradd -m -s /bin/bash K999
 
-# 设置 K999 的密码（使用 base64 编码）
-echo 'K999:Y29uZ3JhZ3VuYXRpb24=' | chpasswd -e
+# Set password for K999
+echo "K999:Y29uZ3JhZ3VsaW9uCg==" | chpasswd -e
 
-# ==============================
-# 漏洞设置
-# ==============================
-# 1. 漏洞是 CVE-2017-5638
-# 2. 新增一个普通的使用者叫Allin，他的密码是dsvq43#^$sdcsz，并用明文的方式储存
-# 3. 在Allin的主目录下面新增一个叫user.txt的文件，里面放一串随机的乱码
+# Ensure SSH service exists
+systemctl status ssh || systemctl start ssh
 
-# 添加用户 Allin
-useradd -m -s /bin/bash Allin
+# Ensure HTTP service exists
+systemctl status apache2 || systemctl start apache2
 
-# 设置 Allin 的密码
-echo 'Allin:dsvq43#^$sdcsz' | chpasswd
+# Ensure HTTPS service exists
+if ! dpkg -l | grep -q openssl; then
+    apt-get install -y openssl
+fi
 
-# 在 Allin 的主目录下创建 user.txt 文件并写入随机内容
-echo "Random Text" > /home/Allin/user.txt
+# Ensure sudo function exists
+if ! dpkg -l | grep -q sudo; then
+    apt-get install -y sudo
+fi
 
-# ==============================
-# 提权设置
-# ==============================
-# 1. 在 root 的主目录下，建立一个叫 root.txt 的文件，并将 root's flag 放进此文件
-# 2. 在 Allin 的主目录下，有一个文件具有SUID漏洞
+# Vulnerability Configuration
+# 1. CVE-2017-5638
+# 2. Create a regular user Allin with password 'dsvq43#^$sdcsz'
+# 3. Create a file named 'user.txt' with random content in Allin's home directory
 
-# 在 root 的主目录下创建 root.txt 文件并写入 flag
-echo "root's flag" > /root/root.txt
+# Apply CVE-2017-5638 vulnerability
+# (You need to apply this vulnerability manually as it requires specific configuration)
 
-# 创建具有 SUID 漏洞的文件（示例文件，具体漏洞需要根据实际情况设置）
-touch /home/Allin/suid_vulnerable_file
-chmod +s /home/Allin/suid_vulnerable_file
+# Create regular user Allin
+useradd -m Allin
 
-# 完成
-echo "靶机设置完成！"
+# Set password for Allin
+echo "Allin:dsvq43#^$sdcsz" | chpasswd
+
+# Create a file with random content in Allin's home directory
+echo "Random Content" > /home/Allin/user.txt
+
+# Privilege Escalation Configuration
+# 1. Create a file named 'root.txt' with root's flag in root's home directory
+# 2. Set SUID bit on a file in Allin's home directory
+
+# Create 'root.txt' file with root's flag
+echo "Root's Flag" > /root/root.txt
+
+# Set SUID bit on a file in Allin's home directory (You need to create a file and set SUID manually)
+
+# Instructions to Execute:
+# 1. Save this script as 'setup_target.sh'.
+# 2. Open terminal and navigate to the directory where the script is saved.
+# 3. Run the command 'sudo bash setup_target.sh' to execute the script.
+# 4. Follow any additional instructions provided in the script comments to complete setup.
