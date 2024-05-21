@@ -154,6 +154,11 @@ cat <<EOF > /etc/apache2/sites-available/mywebsite.conf
     DocumentRoot /var/www/html/mywebsite
     ErrorLog \${APACHE_LOG_DIR}/error.log
     CustomLog \${APACHE_LOG_DIR}/access.log combined
+    <Directory /var/www/html/mywebsite>
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride All
+        Require all granted
+    </Directory>
 </VirtualHost>
 EOF
 
