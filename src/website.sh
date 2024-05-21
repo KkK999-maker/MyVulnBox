@@ -177,8 +177,16 @@ EOF
 
 echo
 
-# 12. 重新啟動 Apache
+# 12. 更改目錄擁有者和權限
+echo "更改目錄擁有者和權限"
+chown -R www-data:www-data /var/www/html/mywebsite
+chmod -R 755 /var/www/html/mywebsite
+
+echo
+
+# 13. 重新啟動 Apache
 echo "重新啟動 Apache 服務"
 systemctl restart apache2
 
 echo "網站已成功建立並運行在 http://localhost"
+
