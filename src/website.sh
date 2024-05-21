@@ -148,25 +148,19 @@ echo
 
 # 11. 設定 Apache 網站配置檔案
 echo "設定 Apache 網站配置檔案"
-cat <<EOF > /etc/apache2/sites-available/mywebsite.conf
+cat <<EOF > /etc/apache2/sites-available/000-default.conf
 <VirtualHost *:80>
     ServerAdmin webmaster@localhost
     DocumentRoot /var/www/html/mywebsite
     ErrorLog \${APACHE_LOG_DIR}/error.log
     CustomLog \${APACHE_LOG_DIR}/access.log combined
-    <Directory /var/www/html/mywebsite>
-        Options Indexes FollowSymLinks MultiViews
-        AllowOverride All
-        Require all granted
-    </Directory>
 </VirtualHost>
 EOF
 
 echo
 
-# 12. 啟用網站配置並重啟 Apache
-echo "啟用網站配置並重啟 Apache"
-a2ensite mywebsite.conf
-systemctl reload apache2
+# 12. 重新啟動 Apache
+echo "重新啟動 Apache 服務"
+systemctl restart apache2
 
 echo "網站已成功建立並運行在 http://localhost"
