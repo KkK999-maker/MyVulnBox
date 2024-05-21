@@ -89,7 +89,7 @@ cat <<EOF > /var/www/html/mywebsite/login.php
 \$password = "admin";
 \$dbname = "mydatabase";
 
-$conn = new mysqli(\$servername, \$username, \$password, \$dbname);
+\$conn = new mysqli(\$servername, \$username, \$password, \$dbname);
 
 if (\$conn->connect_error) {
     die("連接失敗: " . \$conn->connect_error);
@@ -102,7 +102,10 @@ if (\$conn->connect_error) {
 \$result = \$conn->query(\$sql);
 
 if (\$result->num_rows > 0) {
+    session_start();
+    \$_SESSION['username'] = \$user;
     header("Location: dashboard.php");
+    exit;
 } else {
     echo "Login Failed";
 }
@@ -116,6 +119,14 @@ echo
 # 9. 建立 dashboard.php 檔案
 echo "建立 dashboard.php 檔案"
 cat <<EOF > /var/www/html/mywebsite/dashboard.php
+<?php
+session_start();
+
+if (!isset(\$_SESSION['username'])) {
+    header("Location: index.html");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -138,6 +149,13 @@ echo
 echo "建立 exec.php 檔案"
 cat <<EOF > /var/www/html/mywebsite/exec.php
 <?php
+session_start();
+
+if (!isset(\$_SESSION['username'])) {
+    header("Location: index.html");
+    exit;
+}
+
 \$ip = \$_POST['ip'];
 \$output = shell_exec("ping -c 4 " . escapeshellarg(\$ip));
 echo "<pre>\$output</pre>";
