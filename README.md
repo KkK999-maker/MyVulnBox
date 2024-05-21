@@ -1,79 +1,68 @@
 MyVulnBox
+
+* Static Info:
+  ![Bash使用](https://img.shields.io/badge/Bash_Script-2A2Ba2)
+  ![Docker使用](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+  ![Python使用](https://img.shields.io/badge/Python-14354C.svg?logo=python&logoColor=white)
+* Development:
+  ![版權宣告](https://img.shields.io/github/license/TwMoonBear-Arsenal/Box_PaperPass)
+
+  
 ====
 
-# 壹、REPO內容說明
+# 1. 功能簡介
 
-## 一、運用目標
+* 提供一組Docker相關腳本，運行腳本後可建立簡單紅隊靶機，作為示範教學使用。
 
-* 提供一個腳本，執行後可建立簡單靶機環境。
+# 2. 項目介紹
 
-## 二、運用架構
+## 2.1. Release Asset
 
-* 本Repo提供一個bash script。
+- **data資料夾**：配合dockerfile設定所需檔案
+- **dockerfile檔案**：容器創建文件
+- **LICENSE檔案**：版權宣告
+- **README.md檔案**：說明文件
 
-## 三、運作流程
+## 2.2. 外部依賴
 
-* 將bash script複製到Ubuntu的VM或DockerContainer中。
-* 以Root權限執行後，可：
-  * 自動設定一個有cmd injection的網站
-  * 自動設定一般使用者CP提權弱點
-* 使用者可以此設定後之VM或DockerContainer，作為練習破密及提權靶機
+- **Ubuntu Image**：執行dockerfile組建所需，可為遠端dockerhub或本地提供
 
-> 以下需要修改，給AI提示詞(像跟他說 我要幹啥，按步驟一步步的說清楚)
+# 3. 作業運用
 
-# 參、REPO使用方法
+## 3.1 Repo構管
 
-## 一、需求分析 & 二、系統設計
+* 此Repo為privite，直接修改main branch。
+* 主要更新於develop branch執行後，pull request回main branch。
 
-None
+## 3.2. 模組設計
 
-## 三、模組設計
+* 於README.md及/doc/design.vpp說明。
+* 主要規格為：
+  * 可組建靶機容器映像檔
+  * 靶機具備外部滲透弱點：cmd injection
+  * 靶機具備內部提權弱點：linux cp提權
 
-設計(滾修)後直接於Readme註記。
+## 3.3. 模組發展
 
-## 四、模發測佈
+### 3.3.1. 功能開發
 
-### (一)模組發展
+* 主要編寫bash腳本用以初始化靶機，可下載Repo後使用VScode編寫。
 
-主要是dockerfile包含bash腳本，完成後直接存檔source下。
+### 3.3.2. 模組測試
 
-### (二)模組測試
+* 使用Python的Pipenv虛擬環境+Pytest模組。
+* 測試時：
+  1. 安裝pipenv ```pip install pipenv```
+  2. 回復pipenv ```pipenv install```
+  3. 執行測試 ```pipenv run pytest```
+* 待補充
 
-利用github action做自動化測試。
+### 3.3.3. 模組發佈
 
-### (三)模組發佈
+* 檢核後手動發佈
 
-利用github action做自動化發佈。
 
-## [待修正]五、系測版控
 
-### (一)獨立使用
 
-* [方法]執行image
-  * 利用docker直接建置，將新增image至本地registry
-    ```bash
-    # -t: tag
-    # . : 單點表示目前目錄
-    # --no-cache: 避免在Build時被cache，造成沒有讀到最新的Dockerfile
-    docker build -t neo4j . --no-cache
-    ```
-  * 檢視本地images
-    ```bash
-    docker images
-    ```  
-  * 使用本地image起容器
-    ```
-    docker run --publish=7474:7474 --publish=7687:7687 --volume=$HOME/neo4j/data:/data neo4j
-    ```
-* 瀏覽器開啟 
-* [方法]執行dockercompose
-  * 直接執行dockercompose
-    ```powershell
-    docker-compose up
-    ```
-* 登入瀏覽器確認運作正常
-* http://localhost:7474/browser/
 
-* 使用UI關閉container並刪除image
 
-### (二)併入SOA使用
