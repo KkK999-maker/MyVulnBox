@@ -1,1 +1,64 @@
 
+# 使用官方的 Ubuntu 基礎映像
+FROM ubuntu:20.04
+
+# 設定環境變數以避免安裝過程中交互提示
+ENV DEBIAN_FRONTEND=noninteractive
+
+# 更新軟件包並安裝必要的軟件
+RUN apt-get update && \
+    apt-get install -y \
+    openssh-server \
+    apache2 \
+    sudo \
+    openssl \
+    dos2unix \
+    php libapache2-mod-php php-mysql \
+    mysql-server \
+    && apt-get clean
+
+# 建立使用者K999並加入root群組
+RUN useradd -m K999 && \
+    usermod -aG root K999 && \
+    echo "K999:$(echo -n 'congragulation' | base64)" | chpasswd
+
+# 安裝並啟動 SSH 服務
+RUN service ssh start
+
+# 安裝並啟動 Apache 服務
+RUN service apache2 start
+
+# 啟用 Apache 的 SSL 模組
+RUN a2enmod ssl && service apache2 restart
+
+# 確認 sudo 是否存在
+RUN apt-get install -y sudo
+
+# 外部滲透設定
+# 新增一個普通的使用者Allin，他的密碼是admin，並用明文的方式儲存
+RUN useradd -m Allin && \
+    echo "Allin:admin" | chpasswd
+
+# 複製並執行 website.sh 腳本
+COPY website.sh /home/K999/website.sh
+RUN dos2unix /home/K999/website.sh && \
+    chown K999:K999 /home/K999/website.sh && \
+    chmod +x /home/K999/website.sh && \
+    su - K999 -c "bash /home/K999/website.sh"
+
+# 在Allin的主目錄建立名為user.txt的檔案，裡面有一串亂碼
+RUN echo "r4nd0mstr1ng" > /home/Allin/user.txt && \
+    chown Allin:Allin /home/Allin/user.txt
+
+# 內部提權設定
+# 在root的主目錄下，建立一個叫root.txt的文件，並將root's flag放進此文件
+RUN echo "root's flag" > /root/root.txt
+
+# 授權所有使用者可以用root權限執行cp命令
+RUN echo "ALL ALL=(ALL) NOPASSWD: /bin/cp" >> /etc/sudoers
+
+# 暴露端口
+EXPOSE 22 80 443
+
+# 啟動 SSH 和 Apache 服務
+CMD service ssh start && service apache2 start && tail -f /dev/null
