@@ -1,21 +1,23 @@
+#!/bin/bash
+
 # 1. 更新和安裝 Apache
 echo "更新軟體包並安裝 Apache 伺服器"
 apt-get update
-apt-get install apache2 -y
+apt-get install -y apache2
 
 echo
 
 # 2. 安裝 PHP 和 MySQL
 echo "安裝 PHP 和 MySQL"
-apt-get install php libapache2-mod-php php-mysql -y
-apt-get install mysql-server -y
+apt-get install -y php libapache2-mod-php php-mysql
+apt-get install -y mysql-server
 
 echo
 
 # 3. 啟動 Apache 和 MySQL 服務
 echo "啟動 Apache 和 MySQL 服務"
-systemctl start apache2
-systemctl start mysql
+service apache2 start
+service mysql start
 
 echo
 
@@ -186,7 +188,6 @@ echo
 
 # 13. 重新啟動 Apache
 echo "重新啟動 Apache 服務"
-systemctl restart apache2
+service apache2 restart
 
 echo "網站已成功建立並運行在 http://localhost"
-
